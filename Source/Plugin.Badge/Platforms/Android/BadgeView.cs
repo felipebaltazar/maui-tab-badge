@@ -9,6 +9,10 @@ using Android.Widget;
 using Android.Graphics.Drawables.Shapes;
 using AndroidX.Core.View;
 using Plugin.Badge.Abstractions;
+using View = Android.Views.View;
+using Animation = Android.Views.Animations.Animation;
+using Color = Android.Graphics.Color;
+using ShapeDrawable = Android.Graphics.Drawables.ShapeDrawable;
 
 namespace Plugin.Badge.Droid
 {

@@ -44,12 +44,8 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LegacyBadgedTabbedRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="BadgedTabbedPageRenderer.cs" />
-    <Compile Include="BadgeView.cs" />
-    <Compile Include="BadgeViewExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

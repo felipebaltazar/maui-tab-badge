@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xamarin.Forms.Platform.Android.AppCompat;
-using Xamarin.Forms;
+﻿using Android.Content;
 using Android.Views;
 using Android.Widget;
-using Xamarin.Forms.Platform.Android;
-using Android.Content;
-using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
-using TabbedPage = Xamarin.Forms.TabbedPage;
-using Plugin.Badge.Abstractions;
-using System.Linq;
 using Google.Android.Material.BottomNavigation;
 using Google.Android.Material.Tabs;
+using Microsoft.Maui.Controls.Compatibility.Platform.Android.AppCompat;
+using Microsoft.Maui.Controls.Platform;
+using Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;
+using Plugin.Badge.Abstractions;
+using TabbedPage = Microsoft.Maui.Controls.TabbedPage;
 
 namespace Plugin.Badge.Droid
 {
@@ -52,7 +47,7 @@ namespace Plugin.Badge.Droid
             {
                 case ToolbarPlacement.Default:
                 case ToolbarPlacement.Top:
-                    _topTabLayout = ViewGroup.FindChildOfType<TabLayout>();
+                    _topTabLayout = this.FindChildOfType<TabLayout>();
                     if (_topTabLayout == null)
                     {
                         Console.WriteLine("Plugin.Badge: No TabLayout found. Badge not added.");
@@ -62,7 +57,7 @@ namespace Plugin.Badge.Droid
                     _topTabStrip = _topTabLayout.FindChildOfType<LinearLayout>();
                     return _topTabLayout.TabCount;
                 case ToolbarPlacement.Bottom:
-                    _bottomTabStrip = ViewGroup.FindChildOfType<BottomNavigationView>()?.GetChildAt(0) as ViewGroup;
+                    _bottomTabStrip = this.FindChildOfType<BottomNavigationView>()?.GetChildAt(0) as ViewGroup;
                     if (_bottomTabStrip == null)
                     {
                         Console.WriteLine("Plugin.Badge: No bottom tab layout found. Badge not added.");

@@ -1,8 +1,10 @@
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Android.Views;
+using Microsoft.Maui.Controls.Compatibility.Platform.Android;
+using Microsoft.Maui.Controls.Platform;
 using Plugin.Badge.Abstractions;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
+using Font = Microsoft.Maui.Font;
 using View = Android.Views.View;
 
 namespace Plugin.Badge.Droid
@@ -17,14 +19,14 @@ namespace Plugin.Badge.Droid
 
             // set color if not default
             var tabColor = TabBadge.GetBadgeColor(element);
-            if (tabColor != Color.Default)
+            if (tabColor.IsNotDefault())
             {
                 badgeView.BadgeColor = tabColor.ToAndroid();
             }
 
             // set text color if not default
             var tabTextColor = TabBadge.GetBadgeTextColor(element);
-            if (tabTextColor != Color.Default)
+            if (tabTextColor.IsNotDefault())
             {
                 badgeView.TextColor = tabTextColor.ToAndroid();
             }
@@ -33,7 +35,7 @@ namespace Plugin.Badge.Droid
             var font = TabBadge.GetBadgeFont(element);
             if (font != Font.Default)
             {
-                badgeView.Typeface = font.ToTypeface();
+                badgeView.Typeface = font.ToTypeface((element.Handler ?? Application.Current.Handler).MauiContext.Services.GetRequiredService<IFontManager>());
             }
 
             var margin = TabBadge.GetBadgeMargin(element);
@@ -65,7 +67,7 @@ namespace Plugin.Badge.Droid
 
             if (e.PropertyName == TabBadge.BadgeFontProperty.PropertyName)
             {
-                badgeView.Typeface = TabBadge.GetBadgeFont(element).ToTypeface();
+                badgeView.Typeface = TabBadge.GetBadgeFont(element).ToTypeface((element.Handler ?? Application.Current.Handler).MauiContext.Services.GetRequiredService<IFontManager>());
                 return;
             }
 

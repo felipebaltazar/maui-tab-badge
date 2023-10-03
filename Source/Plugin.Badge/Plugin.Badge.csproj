@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <UseMaui>true</UseMaui>
+    <TargetFrameworks>net6.0-android;net6.0-ios</TargetFrameworks>
+    <OutputType>Library</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+    <SingleProject>true</SingleProject>
+
+    <AssemblyName>Plugin.BadgeCompat</AssemblyName>
+    <RootNamespace>Plugin.BadgeCompat</RootNamespace>
+    <AssemblyVersion>6.0.0</AssemblyVersion>
+    <AssemblyFileVersion>6.0.0</AssemblyFileVersion>
+    <Version>6.0.0-pre</Version>
+    <PackOnBuild>true</PackOnBuild>
+    <NeutralLanguage>en</NeutralLanguage>
+    <LangVersion>default</LangVersion>
+    <LangVersion>latest</LangVersion>
+    <PackageProjectUrl>https://github.com/felipebaltazar/maui-tab-badge</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/felipebaltazar/maui-tab-badge/master/images/icon.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/felipebaltazar/maui-tab-badge</RepositoryUrl>
+    <PackageTags>maui, control</PackageTags>
+    <Title>maui tab badge for Maui</Title>
+    <Owners>Felipe Baltazar</Owners>
+    <Authors>Felipe Baltazar</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+</Project>
