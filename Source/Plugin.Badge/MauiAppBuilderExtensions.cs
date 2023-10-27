@@ -1,5 +1,7 @@
 
 
+using Microsoft.Maui.Controls.Compatibility.Hosting;
+
 namespace Plugin.Badge.Abstractions;
 
 public static class MauiAppBuilderExtensions

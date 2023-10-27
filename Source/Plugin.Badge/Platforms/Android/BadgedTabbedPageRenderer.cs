@@ -6,30 +6,28 @@ using Google.Android.Material.Tabs;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android.AppCompat;
 using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;
+using Microsoft.Maui.Handlers;
 using Plugin.Badge.Abstractions;
 using TabbedPage = Microsoft.Maui.Controls.TabbedPage;
 
 namespace Plugin.Badge.Droid
 {
-    public class BadgedTabbedPageRenderer : TabbedPageRenderer
+    public class BadgedTabbedPageRenderer : TabbedViewHandler
     {
         private const int DelayBeforeTabAdded = 50;
         protected readonly Dictionary<Element, BadgeView> BadgeViews = new Dictionary<Element, BadgeView>();
         private TabLayout _topTabLayout;
         private LinearLayout _topTabStrip;
         private ViewGroup _bottomTabStrip;
+        protected TabbedPage Element => VirtualView as TabbedPage;
+        protected ViewGroup ViewGroup => PlatformView as ViewGroup;
 
-        public BadgedTabbedPageRenderer(Context context) : base(context)
+        protected override void ConnectHandler(Android.Views.View platformView)
         {
-        }
+            base.ConnectHandler(platformView);
 
-        protected override void OnElementChanged(ElementChangedEventArgs<TabbedPage> e)
-        {
-            base.OnElementChanged(e);
-
-            // make sure we cleanup old event registrations
-            Cleanup(e.OldElement);
-            Cleanup(Element);
+            //Cleanup(e.OldElement);
+            Cleanup(this.Element);
 
             var tabCount = InitLayout();
             for (var i = 0; i < tabCount; i++)
@@ -41,13 +39,15 @@ namespace Plugin.Badge.Droid
             Element.ChildRemoved += OnTabRemoved;
         }
 
+
+
         private int InitLayout()
         {
             switch (this.Element.OnThisPlatform().GetToolbarPlacement())
             {
                 case ToolbarPlacement.Default:
                 case ToolbarPlacement.Top:
-                    _topTabLayout = this.FindChildOfType<TabLayout>();
+                    _topTabLayout = ViewGroup.FindChildOfType<TabLayout>();
                     if (_topTabLayout == null)
                     {
                         Console.WriteLine("Plugin.Badge: No TabLayout found. Badge not added.");
@@ -57,7 +57,7 @@ namespace Plugin.Badge.Droid
                     _topTabStrip = _topTabLayout.FindChildOfType<LinearLayout>();
                     return _topTabLayout.TabCount;
                 case ToolbarPlacement.Bottom:
-                    _bottomTabStrip = this.FindChildOfType<BottomNavigationView>()?.GetChildAt(0) as ViewGroup;
+                    _bottomTabStrip = ViewGroup.FindChildOfType<BottomNavigationView>()?.GetChildAt(0) as ViewGroup;
                     if (_bottomTabStrip == null)
                     {
                         Console.WriteLine("Plugin.Badge: No bottom tab layout found. Badge not added.");
@@ -113,7 +113,7 @@ namespace Plugin.Badge.Droid
             page.PropertyChanged += OnTabbedPagePropertyChanged;
         }
 
-       
+
 
         protected virtual void OnTabbedPagePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -142,11 +142,10 @@ namespace Plugin.Badge.Droid
             AddTabBadge(Element.Children.IndexOf(page));
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void DisconnectHandler(Android.Views.View platformView)
         {
+            base.DisconnectHandler(platformView);
             Cleanup(Element);
-
-            base.Dispose(disposing);
         }
 
         private void Cleanup(TabbedPage page)

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <UseMaui>true</UseMaui>
     <TargetFrameworks>net6.0-android;net6.0-ios</TargetFrameworks>
@@ -12,9 +12,9 @@
 
     <AssemblyName>Plugin.BadgeCompat</AssemblyName>
     <RootNamespace>Plugin.BadgeCompat</RootNamespace>
-    <AssemblyVersion>6.0.0</AssemblyVersion>
-    <AssemblyFileVersion>6.0.0</AssemblyFileVersion>
-    <Version>6.0.0-pre</Version>
+    <AssemblyVersion>6.0.3</AssemblyVersion>
+    <AssemblyFileVersion>6.0.3</AssemblyFileVersion>
+    <Version>6.0.3-pre</Version>
     <PackOnBuild>true</PackOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>default</LangVersion>
