@@ -41,6 +41,8 @@ namespace Plugin.Badge.Droid
 
         public View Target { get; private set; }
 
+        public Google.Android.Material.Badge.BadgeDrawable BottomBadge { get; private set; }
+
         public BadgePosition Postion
         {
             get => _position;
@@ -108,6 +110,13 @@ namespace Plugin.Badge.Droid
         {
             var badgeView = new BadgeView(context, null, Android.Resource.Attribute.TextViewStyle);
             badgeView.AddToTargetLayout(target);
+            return badgeView;
+        }
+
+        public static BadgeView ForBottom(Context context, Google.Android.Material.Badge.BadgeDrawable bottomBadge)
+        {
+            var badgeView = new BadgeView(context, null, Android.Resource.Attribute.TextViewStyle);
+            badgeView.BottomBadge = bottomBadge;
             return badgeView;
         }
 

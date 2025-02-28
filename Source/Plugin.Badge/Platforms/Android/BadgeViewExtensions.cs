@@ -11,17 +11,35 @@ namespace Plugin.Badge.Droid
 {
     internal static class BadgeViewExtensions
     {
-        public static void UpdateFromElement(this BadgeView badgeView, Page element)
+        public static void UpdateFromElement(this BadgeView badgeView, Page element, Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific.ToolbarPlacement toolbarPlacement)
         {
             //get text
             var badgeText = TabBadge.GetBadgeText(element);
             badgeView.Text = badgeText;
+            if (badgeView.BottomBadge != null)
+            {
+                if (Int32.TryParse(TabBadge.GetBadgeText(element), out int number) && number != 0)
+                {
+                    badgeView.BottomBadge.SetVisible(true);
+                    badgeView.BottomBadge.Number = number;
+                }
+                else
+                {
+                    badgeView.BottomBadge.SetVisible(false);
+                    badgeView.BottomBadge.ClearNumber();
+                }
+            }
 
             // set color if not default
             var tabColor = TabBadge.GetBadgeColor(element);
             if (tabColor.IsNotDefault())
             {
                 badgeView.BadgeColor = tabColor.ToAndroid();
+
+                if (badgeView.BottomBadge != null)
+                {
+                    badgeView.BottomBadge.BackgroundColor = tabColor.ToAndroid().ToArgb();
+                }
             }
 
             // set text color if not default
@@ -29,6 +47,11 @@ namespace Plugin.Badge.Droid
             if (tabTextColor.IsNotDefault())
             {
                 badgeView.TextColor = tabTextColor.ToAndroid();
+
+                if (badgeView.BottomBadge != null)
+                {
+                    badgeView.BottomBadge.BadgeTextColor = tabTextColor.ToAndroid().ToArgb();
+                }
             }
 
             // set font if not default
@@ -39,7 +62,18 @@ namespace Plugin.Badge.Droid
             }
 
             var margin = TabBadge.GetBadgeMargin(element);
-            badgeView.SetMargins((float)margin.Left, (float)margin.Top, (float)margin.Right, (float)margin.Bottom);
+            if (toolbarPlacement == Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific.ToolbarPlacement.Bottom)
+            {
+                //var left = Math.Abs((float)margin.Left);
+                //var top = Math.Abs((float)margin.Top);
+                //var right = Math.Abs((float)margin.Right);
+                //var bottom = Math.Abs((float)margin.Bottom);
+                //badgeView.SetMargins(left, top, right, bottom);
+            }
+            else
+            {
+                badgeView.SetMargins((float)margin.Left, (float)margin.Top, (float)margin.Right, (float)margin.Bottom);
+            }
 
             // set position
             badgeView.Postion = TabBadge.GetBadgePosition(element);
@@ -50,18 +84,45 @@ namespace Plugin.Badge.Droid
             if (e.PropertyName == TabBadge.BadgeTextProperty.PropertyName)
             {
                 badgeView.Text = TabBadge.GetBadgeText(element);
+                if (badgeView.BottomBadge != null)
+                {
+                    if (Int32.TryParse(TabBadge.GetBadgeText(element), out int number) && number != 0)
+                    {
+                        badgeView.BottomBadge.SetVisible(true);
+                        badgeView.BottomBadge.Number = number;
+                    }
+                    else
+                    {
+                        badgeView.BottomBadge.SetVisible(false);
+                        badgeView.BottomBadge.ClearNumber();
+                    }
+                }
                 return;
             }
 
             if (e.PropertyName == TabBadge.BadgeColorProperty.PropertyName)
             {
                 badgeView.BadgeColor = TabBadge.GetBadgeColor(element).ToAndroid();
+                if (TabBadge.GetBadgeColor(element).IsNotDefault())
+                {
+                    if (badgeView.BottomBadge != null)
+                    {
+                        badgeView.BottomBadge.BackgroundColor = TabBadge.GetBadgeColor(element).ToAndroid().ToArgb();
+                    }
+                }
                 return;
             }
 
             if (e.PropertyName == TabBadge.BadgeTextColorProperty.PropertyName)
             {
                 badgeView.TextColor = TabBadge.GetBadgeTextColor(element).ToAndroid();
+                if (TabBadge.GetBadgeTextColor(element).IsNotDefault())
+                {
+                    if (badgeView.BottomBadge != null)
+                    {
+                        badgeView.BottomBadge.BadgeTextColor = TabBadge.GetBadgeTextColor(element).ToAndroid().ToArgb();
+                    }
+                }
                 return;
             }
 
