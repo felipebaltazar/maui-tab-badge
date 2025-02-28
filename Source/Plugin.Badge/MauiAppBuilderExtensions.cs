@@ -14,6 +14,8 @@ public static class MauiAppBuilderExtensions
             handlers.AddHandler(typeof(TabbedPage), typeof(Plugin.Badge.Droid.BadgedTabbedPageRenderer));
 #elif IOS
             handlers.AddHandler(typeof(TabbedPage), typeof(Plugin.Badge.iOS.BadgedTabbedPageRenderer));
+#elif MACCATALYST
+            handlers.AddHandler(typeof(TabbedPage), typeof(Plugin.Badge.Mac.BadgedTabbedPageRenderer));
 #endif
         });
 

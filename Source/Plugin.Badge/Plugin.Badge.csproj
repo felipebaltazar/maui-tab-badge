@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <UseMaui>true</UseMaui>
-    <TargetFrameworks>net6.0-android;net6.0-ios</TargetFrameworks>
+    <TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
     <OutputType>Library</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
@@ -12,9 +12,9 @@
 
     <AssemblyName>Plugin.BadgeCompat</AssemblyName>
     <RootNamespace>Plugin.BadgeCompat</RootNamespace>
-    <AssemblyVersion>6.0.3</AssemblyVersion>
-    <AssemblyFileVersion>6.0.3</AssemblyFileVersion>
-    <Version>6.0.3-pre</Version>
+    <AssemblyVersion>8.0.0</AssemblyVersion>
+    <AssemblyFileVersion>8.0.0</AssemblyFileVersion>
+    <Version>8.0.0</Version>
     <PackOnBuild>true</PackOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>default</LangVersion>
@@ -29,4 +29,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Platforms\MacCatalyst\BadgedTabbedPageRenderer.cs">
+      <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
+    </Compile>
+  </ItemGroup>
 </Project>

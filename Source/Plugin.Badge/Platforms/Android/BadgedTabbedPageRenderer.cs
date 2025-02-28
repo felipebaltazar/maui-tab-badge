@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿using System.Reflection;
+using Android.Content;
 using Android.Views;
 using Android.Widget;
 using Google.Android.Material.BottomNavigation;
@@ -18,7 +19,7 @@ namespace Plugin.Badge.Droid
         protected readonly Dictionary<Element, BadgeView> BadgeViews = new Dictionary<Element, BadgeView>();
         private TabLayout _topTabLayout;
         private LinearLayout _topTabStrip;
-        private ViewGroup _bottomTabStrip;
+        private Google.Android.Material.BottomNavigation.BottomNavigationView _bottomTabStrip;
         protected TabbedPage Element => VirtualView as TabbedPage;
         protected ViewGroup ViewGroup => PlatformView as ViewGroup;
 
@@ -43,11 +44,20 @@ namespace Plugin.Badge.Droid
 
         private int InitLayout()
         {
+            if (typeof(TabbedPage).IsAssignableFrom(this.Element.GetType()) != true) return 0;
+            var tp = this.Element as TabbedPage;
+
+            FieldInfo tabbedPageManagerFieldInfo = typeof(Microsoft.Maui.Controls.TabbedPage).GetField("_tabbedPageManager", BindingFlags.NonPublic | BindingFlags.Instance); //typeof(Microsoft.Maui.Controls.TabbedPage).GetField("_tabbedPageManager", BindingFlags.NonPublic | BindingFlags.Instance);
+            object tabbedPageManager = tabbedPageManagerFieldInfo?.GetValue(tp);
+
             switch (this.Element.OnThisPlatform().GetToolbarPlacement())
             {
                 case ToolbarPlacement.Default:
                 case ToolbarPlacement.Top:
-                    _topTabLayout = ViewGroup.FindChildOfType<TabLayout>();
+                    //_topTabLayout = ViewGroup.FindChildOfType<TabLayout>();
+                    FieldInfo tabLayoutFieldInfo = tabbedPageManager?.GetType().GetField("_tabLayout", BindingFlags.NonPublic | BindingFlags.Instance);
+                    _topTabLayout = tabLayoutFieldInfo?.GetValue(tabbedPageManager) as Google.Android.Material.Tabs.TabLayout;
+
                     if (_topTabLayout == null)
                     {
                         Console.WriteLine("Plugin.Badge: No TabLayout found. Badge not added.");
@@ -57,14 +67,16 @@ namespace Plugin.Badge.Droid
                     _topTabStrip = _topTabLayout.FindChildOfType<LinearLayout>();
                     return _topTabLayout.TabCount;
                 case ToolbarPlacement.Bottom:
-                    _bottomTabStrip = ViewGroup.FindChildOfType<BottomNavigationView>()?.GetChildAt(0) as ViewGroup;
+                    FieldInfo bottomNavigationViewFieldInfo = tabbedPageManager?.GetType().GetField("_bottomNavigationView", BindingFlags.NonPublic | BindingFlags.Instance);
+                    _bottomTabStrip = bottomNavigationViewFieldInfo?.GetValue(tabbedPageManager) as Google.Android.Material.BottomNavigation.BottomNavigationView;
+
                     if (_bottomTabStrip == null)
                     {
                         Console.WriteLine("Plugin.Badge: No bottom tab layout found. Badge not added.");
                         return 0;
                     }
 
-                    return _bottomTabStrip.ChildCount;
+                    return _bottomTabStrip.Menu.Size();
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -81,33 +93,45 @@ namespace Plugin.Badge.Droid
 
             var placement = Element.OnThisPlatform().GetToolbarPlacement();
             var targetView = placement == ToolbarPlacement.Bottom ? _bottomTabStrip?.GetChildAt(tabIndex) : _topTabLayout?.GetTabAt(tabIndex).CustomView ?? _topTabStrip?.GetChildAt(tabIndex);
-            if (!(targetView is ViewGroup targetLayout))
+
+            BadgeView badgeView = null;
+
+            if (placement == ToolbarPlacement.Bottom)
             {
-                Console.WriteLine("Plugin.Badge: Badge target cannot be null. Badge not added.");
-                return;
+                // create for entire tab layout
+                badgeView = BadgeView.ForBottom(Context, _bottomTabStrip.GetOrCreateBadge(tabIndex));
+                badgeView.Visibility = ViewStates.Invisible;
             }
-
-            var badgeView = targetLayout.FindChildOfType<BadgeView>();
-
-            if (badgeView == null)
+            else
             {
-                var imageView = targetLayout.FindChildOfType<ImageView>();
-                if (placement == ToolbarPlacement.Bottom)
+                if (!(targetView is ViewGroup targetLayout))
                 {
-                    // create for entire tab layout
-                    badgeView = BadgeView.ForTargetLayout(Context, imageView);
+                    Console.WriteLine("Plugin.Badge: Badge target cannot be null. Badge not added.");
+                    return;
                 }
-                else
+
+                badgeView = targetLayout.FindChildOfType<BadgeView>();
+
+                if (badgeView == null)
                 {
-                    //create badge for tab image or text
-                    badgeView = BadgeView.ForTarget(Context, imageView?.Drawable != null
-                        ? (Android.Views.View)imageView
-                        : targetLayout.FindChildOfType<TextView>());
+                    var imageView = targetLayout.FindChildOfType<ImageView>();
+                    if (placement == ToolbarPlacement.Bottom)
+                    {
+                        // create for entire tab layout
+                        badgeView = BadgeView.ForTargetLayout(Context, imageView);
+                    }
+                    else
+                    {
+                        //create badge for tab image or text
+                        badgeView = BadgeView.ForTarget(Context, imageView?.Drawable != null
+                            ? (Android.Views.View)imageView
+                            : targetLayout.FindChildOfType<TextView>());
+                    }
                 }
             }
 
             BadgeViews[page] = badgeView;
-            badgeView.UpdateFromElement(page);
+            badgeView.UpdateFromElement(page, placement);
 
             page.PropertyChanged -= OnTabbedPagePropertyChanged;
             page.PropertyChanged += OnTabbedPagePropertyChanged;
